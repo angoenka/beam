@@ -94,6 +94,7 @@ func main() {
 
 	os.Setenv("HARNESS_ID", *id)
 	os.Setenv("PIPELINE_OPTIONS", options)
+	os.Setenv("WORKER_ID", *id)
 	os.Setenv("LOGGING_API_SERVICE_DESCRIPTOR", proto.MarshalTextString(&pb.ApiServiceDescriptor{Url: *loggingEndpoint}))
 	os.Setenv("CONTROL_API_SERVICE_DESCRIPTOR", proto.MarshalTextString(&pb.ApiServiceDescriptor{Url: *controlEndpoint}))
 
@@ -110,6 +111,8 @@ func main() {
 	args := []string{
 		"-Xmx" + strconv.FormatUint(heapSizeLimit(info), 10),
 		"-XX:-OmitStackTraceInFastThrow",
+		// For local debugging
+		// "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5006",
 		"-cp", strings.Join(cp, ":"),
 		"org.apache.beam.fn.harness.FnHarness",
 	}

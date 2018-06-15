@@ -61,6 +61,7 @@ dependencies {
   shadow library.java.joda_time
   shadow library.java.slf4j_api
   shadow project(path: ":beam-runners-direct-java", configuration: "shadow")
+  shadow project(path: ":beam-runners-reference-java", configuration: "shadow")
   shadow library.java.slf4j_jdk14
   shadowTest project(path: ":beam-sdks-java-io-google-cloud-platform", configuration: "shadowTest")
   shadowTest library.java.hamcrest_core
@@ -124,5 +125,26 @@ task preCommit() {
   }
   dependsOn ":runners:google-cloud-dataflow-java:examples:preCommit"
   dependsOn ":runners:google-cloud-dataflow-java:examples-streaming:preCommit"
+}
+
+task wordCountShadowJar(type: com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar) {
+  archiveName = "wordcount.jar"
+  mergeServiceFiles()
+  append "reference.conf"
+  from sourceSets.main.output
+  configurations = [project.configurations.runtime]
+
+  // Use the same canonical relocations as used in the core shadow jar.
+  relocate("com.google.common", getJavaRelocatedPath("com.google.common")) {
+    // com.google.common is too generic, need to exclude guava-testlib
+    exclude "com.google.common.collect.testing.**"
+    exclude "com.google.common.escape.testing.**"
+    exclude "com.google.common.testing.**"
+    exclude "com.google.common.util.concurrent.testing.**"
+  }
+
+  manifest {
+    attributes "Main-Class": "org.apache.beam.examples.WordCount"
+  }
 }
 

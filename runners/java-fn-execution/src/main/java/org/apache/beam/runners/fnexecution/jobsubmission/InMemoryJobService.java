@@ -97,7 +97,7 @@ public class InMemoryJobService extends JobServiceGrpc.JobServiceImplBase implem
       PrepareJobRequest request,
       StreamObserver<PrepareJobResponse> responseObserver) {
     try {
-      LOG.trace("{} {}", PrepareJobRequest.class.getSimpleName(), request);
+      LOG.info("Prepare job {} {}", PrepareJobRequest.class.getSimpleName(), request);
       // insert preparation
       String preparationId =
           String.format("%s_%s", request.getJobName(), UUID.randomUUID().toString());
@@ -105,7 +105,8 @@ public class InMemoryJobService extends JobServiceGrpc.JobServiceImplBase implem
       if (pipelineOptions == null) {
         throw new NullPointerException("Encountered null pipeline options.");
       }
-      LOG.trace("PIPELINE OPTIONS {} {}", pipelineOptions.getClass(), pipelineOptions);
+      LOG.info("Prepare job with pipeline options {} {}", pipelineOptions.getClass(),
+          pipelineOptions);
       JobPreparation preparation =
           JobPreparation
               .builder()

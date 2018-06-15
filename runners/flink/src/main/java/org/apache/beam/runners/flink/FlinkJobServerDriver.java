@@ -111,7 +111,9 @@ public class FlinkJobServerDriver implements Runnable {
   public void run() {
     try {
       GrpcFnServer<InMemoryJobService> server = createJobServer();
+      System.out.println("Created server " + server.getApiServiceDescriptor());
       server.getServer().awaitTermination();
+      System.out.println("Server terminated ");
     } catch (InterruptedException e) {
       LOG.warn("Job server interrupted", e);
     } catch (Exception e) {

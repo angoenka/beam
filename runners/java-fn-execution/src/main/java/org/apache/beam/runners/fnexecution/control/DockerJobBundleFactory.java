@@ -152,6 +152,8 @@ public class DockerJobBundleFactory implements JobBundleFactory {
                   public WrappedSdkHarnessClient load(Environment environment) throws Exception {
                     RemoteEnvironment remoteEnvironment =
                         environmentFactory.createEnvironment(environment);
+                    LOG.debug("Created environment {}",
+                        remoteEnvironment.getEnvironment().getUrl());
                     return WrappedSdkHarnessClient.wrapping(remoteEnvironment, serverFactory);
                   }
                 });

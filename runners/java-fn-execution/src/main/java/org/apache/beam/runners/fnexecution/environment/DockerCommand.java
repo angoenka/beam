@@ -75,6 +75,7 @@ class DockerCommand {
             .add(dockerExecutable)
             .add("run")
             .add("-d")
+            .add("-v=/usr/local/google/home/goenka/.config/gcloud:/root/.config/gcloud")
             .addAll(dockerOpts)
             .add(imageTag)
             .addAll(args)

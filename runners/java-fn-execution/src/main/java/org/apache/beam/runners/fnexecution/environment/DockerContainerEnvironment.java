@@ -20,6 +20,8 @@ package org.apache.beam.runners.fnexecution.environment;
 import javax.annotation.concurrent.ThreadSafe;
 import org.apache.beam.model.pipeline.v1.RunnerApi.Environment;
 import org.apache.beam.runners.fnexecution.control.InstructionRequestHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A {@link RemoteEnvironment} that wraps a running Docker container.
@@ -29,6 +31,7 @@ import org.apache.beam.runners.fnexecution.control.InstructionRequestHandler;
  */
 @ThreadSafe
 class DockerContainerEnvironment implements RemoteEnvironment {
+  private static final Logger LOG = LoggerFactory.getLogger(DockerContainerEnvironment.class);
 
   static DockerContainerEnvironment create(
       DockerCommand docker,
@@ -79,6 +82,7 @@ class DockerContainerEnvironment implements RemoteEnvironment {
       if (!isClosed) {
         isClosed = true;
         instructionHandler.close();
+        LOG.debug("Killing container {}", containerId);
         docker.killContainer(containerId);
       }
     }

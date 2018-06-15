@@ -56,6 +56,7 @@ dependencies {
   shadow library.java.jackson_annotations
   shadow library.java.findbugs_jsr305
   shadow library.java.slf4j_api
+  shadow library.java.slf4j_simple
   shadow library.java.joda_time
   shadow library.java.commons_compress
   shadow library.java.args4j
@@ -135,3 +136,33 @@ task validatesRunner {
 
 // Generates :beam-runners-flink_2.11:runQuickstartJavaFlinkLocal
 createJavaExamplesArchetypeValidationTask(type: 'Quickstart', runner: 'FlinkLocal')
+//
+//task runJobServer(type: JavaExec) {
+//  classpath = sourceSets.main.runtimeClasspath
+//  main = 'org.apache.beam.runners.flink.FlinkJobServerDriver'
+//  args = ['--job-host=localhost:8099', '--artifacts-dir=/tmp/flink']
+//  jvmArgs = ["-Xdebug", "-Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5005"]
+//}
+
+
+task runJobServer(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = "org.apache.beam.runners.flink.FlinkJobServerDriver"
+    def jobHost = project.hasProperty("jobHost") ? project.property("jobHost") : "localhost:8099"
+    def artifactsDir = project.hasProperty("artifactsDir") ? project.property("artifactsDir") : "/tmp/flink-artifacts"
+    args = ["--job-host=${jobHost}", "--artifacts-dir=${artifactsDir}"]
+    // Enable remote debugging.
+    jvmArgs = ["-Xdebug", "-Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5005"]
+}
+
+task jobServerShadowJar(type: com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar) {
+    archiveName = "flink-job-server.jar"
+    mergeServiceFiles()
+    append "reference.conf"
+    from sourceSets.main.output
+    configurations = [project.configurations.shadow]
+
+    manifest {
+        attributes "Main-Class": "org.apache.beam.runners.flink.FlinkJobServerDriver"
+    }
+}

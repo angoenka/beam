@@ -140,13 +140,15 @@ public class DockerEnvironmentFactory implements EnvironmentFactory {
             String.format("--control_endpoint=%s", controlEndpoint),
             String.format("--semi_persist_dir=%s", semiPersistentDirectory));
 
-    LOG.debug("Creating Docker Container with ID {}", workerId);
+    LOG.debug("Creating Docker Container with for workerID {}", workerId);
     // Wrap the blocking call to clientSource.get in case an exception is thrown.
     String containerId = null;
     InstructionRequestHandler instructionHandler = null;
     try {
       containerId = docker.runImage(containerImage, volArg, args);
-      LOG.debug("Created Docker Container with Container ID {}", containerId);
+      LOG.debug("Created Docker Container for workerID {} with Container ID {}", workerId,
+          containerId);
+      // TODO: Timeout for container startup check.
       // Wait on a client from the gRPC server.
       while (instructionHandler == null) {
         try {
