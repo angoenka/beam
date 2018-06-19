@@ -183,7 +183,13 @@ public class WordCount {
     p.apply("ReadLines", TextIO.read().from(options.getInputFile()))
      .apply(new CountWords())
      .apply(MapElements.via(new FormatAsTextFn()))
-     .apply("WriteCounts", TextIO.write().to(options.getOutput()));
+     .apply("Print", ParDo.of(new DoFn<String, String>() {
+       @ProcessElement
+       public void processElement(@Element String element, OutputReceiver<String> receiver) {
+         System.out.println(element);
+       }
+     }));
+
 
     p.run().waitUntilFinish();
   }
