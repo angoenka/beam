@@ -97,7 +97,7 @@ public class InMemoryJobService extends JobServiceGrpc.JobServiceImplBase implem
       PrepareJobRequest request,
       StreamObserver<PrepareJobResponse> responseObserver) {
     try {
-      LOG.trace("{} {}", PrepareJobRequest.class.getSimpleName(), request);
+      LOG.info("{} {}", PrepareJobRequest.class.getSimpleName(), request);
       // insert preparation
       String preparationId =
           String.format("%s_%s", request.getJobName(), UUID.randomUUID().toString());

@@ -58,6 +58,14 @@ public class FlinkJobServerDriver implements Runnable {
         usage = "The location to store staged artifact files"
     )
     private String artifactStagingPath = "/tmp/beam-artifact-staging";
+
+
+    @Option(
+        name = "--flink-job-master-url",
+        usage = "Flink master url to submit job.",
+        required = false
+    )
+    private String flinkMasterUrl = "[auto]";
   }
 
   public static void main(String[] args) {
@@ -147,7 +155,11 @@ public class FlinkJobServerDriver implements Runnable {
       throws IOException {
     BeamFileSystemArtifactStagingService service =
         new BeamFileSystemArtifactStagingService();
-    return GrpcFnServer.allocatePortAndCreateFor(service, serverFactory);
+    GrpcFnServer<BeamFileSystemArtifactStagingService> artifactStagingServer = GrpcFnServer
+        .allocatePortAndCreateFor(service, serverFactory);
+    LOG.info("ArtifactStaging Server started at {}",
+        artifactStagingServer.getApiServiceDescriptor().getUrl());
+    return artifactStagingServer;
   }
 
   private JobInvoker createJobInvoker() throws IOException {

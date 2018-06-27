@@ -18,6 +18,7 @@
 package org.apache.beam.runners.flink;
 
 import com.google.common.base.Splitter;
+import java.util.Arrays;
 import java.util.List;
 import org.apache.flink.api.java.CollectionEnvironment;
 import org.apache.flink.api.java.ExecutionEnvironment;
@@ -43,6 +44,7 @@ public class FlinkExecutionEnvironments {
 
     String masterUrl = options.getFlinkMaster();
     ExecutionEnvironment flinkBatchEnv;
+    LOG.info("Master URL {}", masterUrl);
 
     // depending on the master, create the right environment.
     if ("[local]".equals(masterUrl)) {
@@ -52,8 +54,9 @@ public class FlinkExecutionEnvironments {
     } else if ("[auto]".equals(masterUrl)) {
       flinkBatchEnv = ExecutionEnvironment.getExecutionEnvironment();
     } else if (masterUrl.matches(".*:\\d*")) {
+      LOG.info("ankur Using remote environment");
       List<String> parts = Splitter.on(':').splitToList(masterUrl);
-      List<String> stagingFiles = options.getFilesToStage();
+      List<String> stagingFiles = Arrays.asList("/usr/local/google/home/goenka/d/work/beam/beam/runners/flink/job-server/build/libs/beam-runners-flink_2.11-job-server-2.6.0-SNAPSHOT-shaded.jar");
       flinkBatchEnv =
           ExecutionEnvironment.createRemoteEnvironment(
               parts.get(0),
